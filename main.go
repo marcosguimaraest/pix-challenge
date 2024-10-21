@@ -2,21 +2,16 @@ package main
 
 import (
 	"fmt"
+	"mguimara/pixchallenge/internal/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
-type pix struct {
-	ID    string  `json:"id"`
-	Price float64 `json:"price"`
-}
-
-var uriApi string = "https://sandbox.asaas.com/api/v3"
-
 func main() {
 	router := gin.Default()
 
-	fmt.Println(os.Getenv("PATH"))
+	http.SetRoutes(router)
+	fmt.Println(os.Getenv("ASAASKEY"))
 	router.Run("localhost:8080")
 }
