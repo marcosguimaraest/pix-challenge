@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -12,9 +11,6 @@ type AsaasTime struct {
 	time.Time
 }
 
-var _ json.Unmarshaler = &AsaasTime{}
-var _ json.Marshaler = &AsaasTime{}
-
 const asaasLayout = "2006-01-02 15:04:05"
 
 func (at *AsaasTime) UnmarshalJSON(b []byte) (err error) {
@@ -23,19 +19,16 @@ func (at *AsaasTime) UnmarshalJSON(b []byte) (err error) {
 		at = &AsaasTime{}
 		return
 	}
-
 	at.Time, err = time.Parse(asaasLayout, s)
-	fmt.Println(at.Time)
 	if err != nil {
 		return err
 	}
 	return
 }
 
-func (at *AsaasTime) MarshalJSON() ([]byte, error) {
+func (at AsaasTime) MarshalJSON() ([]byte, error) {
 	if at.Time.IsZero() {
 		return []byte("null"), nil
 	}
-
 	return []byte(fmt.Sprintf("\"%s\"", at.Time.Format(asaasLayout))), nil
 }

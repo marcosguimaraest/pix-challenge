@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"mguimara/pixchallenge/internal/objects"
 	"net/http"
 	"os"
@@ -12,21 +13,41 @@ import (
 )
 
 var uriApi string = "https://sandbox.asaas.com/api/v3/pix/qrCodes/static"
-var apiKey string = os.Getenv("KEYASAAS")
+var apiKey string = os.Getenv("ASAASKEY")
 
-func PostQrCode(qrCode objects.QrCode) {
-
+func PostQrCode(qrCode objects.QrCode, c *gin.Context) {
 	qrCodeBytes, _ := json.Marshal(qrCode)
 	fmt.Println(string(qrCodeBytes))
-	req, _ := http.NewRequest("POST", uriApi, strings.NewReader(string(qrCodeBytes)))
+	req, err := http.NewRequest("POST", uriApi, strings.NewReader(string(qrCodeBytes)))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 	req.Header.Add("accept", "application/json")
-	req.Header.Add("content-type", "application/json")
-	req.Header.Add("User-Agent", "mguimara/pix-challenge")
+	req.Header.Add("Content-type", "application/json")
+	req.Header.Add("User-Agent", "pix-challenge/0.0.0-alpha")
 	req.Header.Add("access_token", apiKey)
 
-	res, _ := http.DefaultClient.Do(req)
-	fmt.Println(res.Body)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	fmt.Println(string(body))
 }
+
 func GenerateQrCode(c *gin.Context) {
 	var qrCode objects.QrCode
 
@@ -36,5 +57,5 @@ func GenerateQrCode(c *gin.Context) {
 		})
 		return
 	}
-	PostQrCode(qrCode)
+	PostQrCode(qrCode, c)
 }
