@@ -17,6 +17,7 @@ var apiKey string = os.Getenv("KEYASAAS")
 func PostQrCode(qrCode objects.QrCode) {
 
 	qrCodeBytes, _ := json.Marshal(qrCode)
+	fmt.Println(string(qrCodeBytes))
 	req, _ := http.NewRequest("POST", uriApi, strings.NewReader(string(qrCodeBytes)))
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("content-type", "application/json")
