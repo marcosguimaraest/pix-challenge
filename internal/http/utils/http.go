@@ -42,23 +42,45 @@ func ReadResponseBody(res *http.Response, c *gin.Context) ([]byte, error) {
 	return body, err
 }
 
-func ResolveResponse(res *http.Response, c *gin.Context) {
-	body, _ := ReadResponseBody(res, c)
+func ResolveResponse(res *http.Response, c *gin.Context) ([]byte, error) {
+	body, err := ReadResponseBody(res, c)
 	if res.StatusCode == 401 {
-		CustomError(c, errors.New("algo deu errado"), res.StatusCode)
-		return
+		err := errors.New("algo deu errado")
+		CustomError(c, err, res.StatusCode)
+		return body, err
 	}
 	if res.StatusCode == 400 {
 		errResponse, _ := objects.ByteToErrorResponseArray(body)
-		DefaultError(c, errors.New(errResponse.Errors[0].Description))
-		return
+		ResponseError(c, errResponse.Errors[0], res.StatusCode)
+		return body, err
 	}
-	qr, err := objects.ByteToQrCode(body)
+	if err != nil {
+		DefaultError(c, err)
+	}
+	return body, err
+}
+func ResolveQrCodeResponse(res *http.Response, c *gin.Context) {
+	body, errResponse := ResolveResponse(res, c)
+	qr, err := objects.ByteToQrCodeResponse(body)
 	if err != nil {
 		DefaultError(c, err)
 		return
 	}
-	DefaultResponse(c, objects.QRToH(qr))
+	if errResponse == nil {
+		DefaultResponse(c, objects.QRToH(qr))
+	}
+}
+
+func ResolveTransferResponse(res *http.Response, c *gin.Context) {
+	body, errResponse := ResolveResponse(res, c)
+	transfer, err := objects.ByteToTransferResponse(body)
+	if err != nil {
+		DefaultError(c, err)
+		return
+	}
+	if errResponse != nil {
+		DefaultResponse(c, objects.TransferToH(transfer))
+	}
 }
 
 func DefaultResponse(c *gin.Context, h gin.H) {
@@ -74,5 +96,14 @@ func DefaultError(c *gin.Context, err error) {
 func CustomError(c *gin.Context, err error, sc int) {
 	c.JSON(sc, gin.H{
 		"error": err.Error(),
+	})
+}
+
+func ResponseError(c *gin.Context, errResponse objects.ErrorResponse, sc int) {
+	c.JSON(sc, gin.H{
+		"error": gin.H{
+			"code":        errResponse.Code,
+			"description": errResponse.Description,
+		},
 	})
 }

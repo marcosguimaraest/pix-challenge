@@ -11,7 +11,7 @@ type BirthdayTime struct {
 	time.Time
 }
 
-const birthdayLayout = "2006-01-02 15:04:05"
+const birthdayLayout = "2006-01-02"
 
 func (at *BirthdayTime) UnmarshalJSON(b []byte) (err error) {
 	s := strings.Trim(string(b), "\"")

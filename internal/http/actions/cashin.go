@@ -21,7 +21,7 @@ func RequestQrCode(qrCode objects.QrCode, c *gin.Context) {
 		utils.DefaultError(c, err)
 		return
 	}
-	utils.ResolveResponse(res, c)
+	utils.ResolveQrCodeResponse(res, c)
 }
 
 func ParseQrCode(c *gin.Context) *objects.QrCode {
