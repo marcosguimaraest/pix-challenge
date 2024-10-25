@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func ResolveTransferResponse(res *http.Response, c *gin.Context) {
+	body, errResponse := utils.ResolveResponse(res, c)
+	transfer, err := objects.ByteToTransferResponse(body)
+	if err != nil {
+		utils.DefaultError(c, err)
+		return
+	}
+	if errResponse != nil {
+		utils.DefaultResponse(c, objects.TransferToH(transfer))
+	}
+}
+
 func RequestTransfer(transfer objects.Transfer, c *gin.Context) {
 	transferBytes, _ := json.Marshal(transfer)
 	req, err := utils.GetDefaultPostRequest("POST", transferBytes, "transfers")
@@ -21,7 +33,7 @@ func RequestTransfer(transfer objects.Transfer, c *gin.Context) {
 		utils.DefaultError(c, err)
 		return
 	}
-	utils.ResolveTransferResponse(res, c)
+	ResolveTransferResponse(res, c)
 }
 
 func ParseTransfer(c *gin.Context) *objects.Transfer {

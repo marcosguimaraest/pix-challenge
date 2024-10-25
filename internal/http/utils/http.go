@@ -59,29 +59,6 @@ func ResolveResponse(res *http.Response, c *gin.Context) ([]byte, error) {
 	}
 	return body, err
 }
-func ResolveQrCodeResponse(res *http.Response, c *gin.Context) {
-	body, errResponse := ResolveResponse(res, c)
-	qr, err := objects.ByteToQrCodeResponse(body)
-	if err != nil {
-		DefaultError(c, err)
-		return
-	}
-	if errResponse == nil {
-		DefaultResponse(c, objects.QRToH(qr))
-	}
-}
-
-func ResolveTransferResponse(res *http.Response, c *gin.Context) {
-	body, errResponse := ResolveResponse(res, c)
-	transfer, err := objects.ByteToTransferResponse(body)
-	if err != nil {
-		DefaultError(c, err)
-		return
-	}
-	if errResponse != nil {
-		DefaultResponse(c, objects.TransferToH(transfer))
-	}
-}
 
 func DefaultResponse(c *gin.Context, h gin.H) {
 	c.JSON(http.StatusOK, h)

@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func ResolveQrCodeResponse(res *http.Response, c *gin.Context) {
+	body, errResponse := utils.ResolveResponse(res, c)
+	qr, err := objects.ByteToQrCodeResponse(body)
+	if err != nil {
+		utils.DefaultError(c, err)
+		return
+	}
+	if errResponse == nil {
+		utils.DefaultResponse(c, objects.QRToH(qr))
+	}
+}
+
 func RequestQrCode(qrCode objects.QrCode, c *gin.Context) {
 	qrCodeBytes, _ := json.Marshal(qrCode)
 	req, err := utils.GetDefaultPostRequest("POST", qrCodeBytes, "pix/qrCodes/static")
@@ -21,7 +33,7 @@ func RequestQrCode(qrCode objects.QrCode, c *gin.Context) {
 		utils.DefaultError(c, err)
 		return
 	}
-	utils.ResolveQrCodeResponse(res, c)
+	ResolveQrCodeResponse(res, c)
 }
 
 func ParseQrCode(c *gin.Context) *objects.QrCode {
