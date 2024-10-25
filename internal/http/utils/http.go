@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
 	"mguimara/pixchallenge/internal/objects"
@@ -58,6 +59,21 @@ func ResolveResponse(res *http.Response, c *gin.Context) ([]byte, error) {
 		DefaultError(c, err)
 	}
 	return body, err
+}
+
+func ResolveRequest(obj any, c *gin.Context) *http.Response {
+	qrCodeBytes, _ := json.Marshal(obj)
+	req, err := GetDefaultPostRequest("POST", qrCodeBytes, "pix/qrCodes/static")
+	if err != nil {
+		DefaultError(c, err)
+		return nil
+	}
+	res, err := DoDefaultPostRequest(req)
+	if err != nil {
+		DefaultError(c, err)
+		return res
+	}
+	return res
 }
 
 func DefaultResponse(c *gin.Context, h gin.H) {

@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"encoding/json"
 	"mguimara/pixchallenge/internal/http/utils"
 	"mguimara/pixchallenge/internal/objects"
 	"net/http"
@@ -22,17 +21,7 @@ func ResolvePaymentResponse(res *http.Response, c *gin.Context) {
 }
 
 func RequestPayment(payment objects.Payment, c *gin.Context) {
-	paymentBytes, _ := json.Marshal(payment)
-	req, err := utils.GetDefaultPostRequest("POST", paymentBytes, "payments")
-	if err != nil {
-		utils.DefaultError(c, err)
-		return
-	}
-	res, err := utils.DoDefaultPostRequest(req)
-	if err != nil {
-		utils.DefaultError(c, err)
-		return
-	}
+	res := utils.ResolveRequest(payment, c)
 	ResolvePaymentResponse(res, c)
 }
 

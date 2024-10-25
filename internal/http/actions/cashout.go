@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"encoding/json"
 	"mguimara/pixchallenge/internal/http/utils"
 	"mguimara/pixchallenge/internal/objects"
 	"net/http"
@@ -22,17 +21,7 @@ func ResolveTransferResponse(res *http.Response, c *gin.Context) {
 }
 
 func RequestTransfer(transfer objects.Transfer, c *gin.Context) {
-	transferBytes, _ := json.Marshal(transfer)
-	req, err := utils.GetDefaultPostRequest("POST", transferBytes, "transfers")
-	if err != nil {
-		utils.DefaultError(c, err)
-		return
-	}
-	res, err := utils.DoDefaultPostRequest(req)
-	if err != nil {
-		utils.DefaultError(c, err)
-		return
-	}
+	res := utils.ResolveRequest(transfer, c)
 	ResolveTransferResponse(res, c)
 }
 

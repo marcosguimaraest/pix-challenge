@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"encoding/json"
 	"mguimara/pixchallenge/internal/http/utils"
 	"mguimara/pixchallenge/internal/objects"
 	"net/http"
@@ -22,17 +21,7 @@ func ResolveQrCodeResponse(res *http.Response, c *gin.Context) {
 }
 
 func RequestQrCode(qrCode objects.QrCode, c *gin.Context) {
-	qrCodeBytes, _ := json.Marshal(qrCode)
-	req, err := utils.GetDefaultPostRequest("POST", qrCodeBytes, "pix/qrCodes/static")
-	if err != nil {
-		utils.DefaultError(c, err)
-		return
-	}
-	res, err := utils.DoDefaultPostRequest(req)
-	if err != nil {
-		utils.DefaultError(c, err)
-		return
-	}
+	res := utils.ResolveRequest(qrCode, c)
 	ResolveQrCodeResponse(res, c)
 }
 
