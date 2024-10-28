@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const cashinEndpoint = "pix/qrCodes/static"
+
 func ResolveQrCodeResponse(res *http.Response, c *gin.Context) {
 	body, errResponse := utils.ResolveResponse(res, c)
 	qr, err := objects.ByteToQrCodeResponse(body)
@@ -21,7 +23,7 @@ func ResolveQrCodeResponse(res *http.Response, c *gin.Context) {
 }
 
 func RequestQrCode(qrCode objects.QrCode, c *gin.Context) {
-	res := utils.ResolveRequest(qrCode, c)
+	res := utils.ResolveRequest(qrCode, c, cashinEndpoint)
 	ResolveQrCodeResponse(res, c)
 }
 

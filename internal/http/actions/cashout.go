@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const cashoutEndpoint = "transfers"
+
 func ResolveTransferResponse(res *http.Response, c *gin.Context) {
 	body, errResponse := utils.ResolveResponse(res, c)
 	transfer, err := objects.ByteToTransferResponse(body)
@@ -21,7 +23,7 @@ func ResolveTransferResponse(res *http.Response, c *gin.Context) {
 }
 
 func RequestTransfer(transfer objects.Transfer, c *gin.Context) {
-	res := utils.ResolveRequest(transfer, c)
+	res := utils.ResolveRequest(transfer, c, cashoutEndpoint)
 	ResolveTransferResponse(res, c)
 }
 

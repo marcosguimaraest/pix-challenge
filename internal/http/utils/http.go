@@ -23,13 +23,13 @@ func setDefaultHeaders(req *http.Request) {
 	req.Header.Add("access_token", apiKey)
 }
 
-func GetDefaultPostRequest(method string, body []byte, endpoint string) (*http.Request, error) {
+func GetDefaultRequest(method string, body []byte, endpoint string) (*http.Request, error) {
 	req, err := http.NewRequest(method, uriApi+endpoint, strings.NewReader(string(body)))
 	setDefaultHeaders(req)
 	return req, err
 }
 
-func DoDefaultPostRequest(req *http.Request) (*http.Response, error) {
+func DoDefaultRequest(req *http.Request) (*http.Response, error) {
 	res, err := http.DefaultClient.Do(req)
 	return res, err
 }
@@ -61,14 +61,14 @@ func ResolveResponse(res *http.Response, c *gin.Context) ([]byte, error) {
 	return body, err
 }
 
-func ResolveRequest(obj any, c *gin.Context) *http.Response {
+func ResolveRequest(obj any, c *gin.Context, endpoint string) *http.Response {
 	qrCodeBytes, _ := json.Marshal(obj)
-	req, err := GetDefaultPostRequest("POST", qrCodeBytes, "pix/qrCodes/static")
+	req, err := GetDefaultRequest("POST", qrCodeBytes, endpoint)
 	if err != nil {
 		DefaultError(c, err)
 		return nil
 	}
-	res, err := DoDefaultPostRequest(req)
+	res, err := DoDefaultRequest(req)
 	if err != nil {
 		DefaultError(c, err)
 		return res

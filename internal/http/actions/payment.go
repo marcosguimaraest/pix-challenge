@@ -1,12 +1,38 @@
 package actions
 
 import (
+	"errors"
 	"mguimara/pixchallenge/internal/http/utils"
 	"mguimara/pixchallenge/internal/objects"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+const paymentEndpoint = "payments"
+
+func GetQrCodeEndpoint(id string) string {
+	return paymentEndpoint + "/" + id + "/" + "pixQrCode"
+}
+
+func GetQrCodeBody(id string) []byte {
+	return []byte("{\"id\":\"" + id + "\"}")
+}
+
+func RequestPaymentQrCode(pr objects.PaymentResponse, c *gin.Context) *[]byte {
+	req, err := utils.GetDefaultRequest("GET", []byte(""), GetQrCodeEndpoint(pr.ID))
+	if err != nil {
+		utils.DefaultError(c, err)
+		return nil
+	}
+	res, err := utils.DoDefaultRequest(req)
+	if err != nil {
+		utils.DefaultError(c, err)
+		return nil
+	}
+	body, _ := utils.ResolveResponse(res, c)
+	return &body
+}
 
 func ResolvePaymentResponse(res *http.Response, c *gin.Context) {
 	body, errResponse := utils.ResolveResponse(res, c)
@@ -16,12 +42,24 @@ func ResolvePaymentResponse(res *http.Response, c *gin.Context) {
 		return
 	}
 	if errResponse == nil {
-		utils.DefaultResponse(c, objects.PaymentToH(payment))
+		bodyQr := RequestPaymentQrCode(payment, c)
+		if bodyQr != nil {
+			pqr, err := objects.ByteToPaymentQrCodeResponse(*bodyQr)
+			if err != nil {
+				utils.DefaultError(c, err)
+				return
+			}
+			utils.DefaultResponse(c, objects.PaymentQRToH(pqr))
+		}
+		if err != nil {
+			utils.DefaultError(c, errors.New("algo deu errado"))
+			return
+		}
 	}
 }
 
 func RequestPayment(payment objects.Payment, c *gin.Context) {
-	res := utils.ResolveRequest(payment, c)
+	res := utils.ResolveRequest(payment, c, paymentEndpoint)
 	ResolvePaymentResponse(res, c)
 }
 
