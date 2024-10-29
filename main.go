@@ -9,9 +9,8 @@ import (
 )
 
 func main() {
-	router := gin.Default()
+	router := gin.Default(http.SetRoutes)
 
-	http.SetRoutes(router)
 	fmt.Println(os.Getenv("ASAASKEY"))
 	router.Run("localhost:8080")
 }
