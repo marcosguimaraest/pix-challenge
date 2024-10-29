@@ -2,6 +2,7 @@ package actions
 
 import (
 	"errors"
+	"fmt"
 	"mguimara/pixchallenge/internal/http/utils"
 	"mguimara/pixchallenge/internal/objects"
 	"net/http"
@@ -50,6 +51,7 @@ func ResolvePaymentResponse(res *http.Response, c *gin.Context) {
 				return
 			}
 			utils.DefaultResponse(c, objects.PaymentQRToH(pqr))
+			return
 		} else {
 			utils.DefaultError(c, errors.New("algo deu errado"))
 			return
@@ -66,6 +68,7 @@ func ParsePayment(c *gin.Context) *objects.Payment {
 	var payment objects.Payment
 
 	if err := c.BindJSON(&payment); err != nil {
+		fmt.Println(string(err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})

@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"mguimara/pixchallenge/internal/objects"
 	"net/http"
@@ -53,7 +54,7 @@ func ResolveResponse(res *http.Response, c *gin.Context) ([]byte, error) {
 	if res.StatusCode == 400 {
 		errResponse, _ := objects.ByteToErrorResponseArray(body)
 		ResponseError(c, errResponse.Errors[0], res.StatusCode)
-		return body, err
+		return body, errors.New("algo deu errado")
 	}
 	if err != nil {
 		DefaultError(c, err)
@@ -63,6 +64,7 @@ func ResolveResponse(res *http.Response, c *gin.Context) ([]byte, error) {
 
 func ResolveRequest(obj any, c *gin.Context, endpoint string) *http.Response {
 	qrCodeBytes, _ := json.Marshal(obj)
+	fmt.Println(string(qrCodeBytes))
 	req, err := GetDefaultRequest("POST", qrCodeBytes, endpoint)
 	if err != nil {
 		DefaultError(c, err)
@@ -81,12 +83,14 @@ func DefaultResponse(c *gin.Context, h gin.H) {
 }
 
 func DefaultError(c *gin.Context, err error) {
+	fmt.Println(string(err.Error()))
 	c.JSON(http.StatusBadRequest, gin.H{
 		"error": err.Error(),
 	})
 }
 
 func CustomError(c *gin.Context, err error, sc int) {
+	fmt.Println(string(err.Error()))
 	c.JSON(sc, gin.H{
 		"error": err.Error(),
 	})
