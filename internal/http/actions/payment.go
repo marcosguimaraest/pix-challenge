@@ -50,8 +50,7 @@ func ResolvePaymentResponse(res *http.Response, c *gin.Context) {
 				return
 			}
 			utils.DefaultResponse(c, objects.PaymentQRToH(pqr))
-		}
-		if err != nil {
+		} else {
 			utils.DefaultError(c, errors.New("algo deu errado"))
 			return
 		}
