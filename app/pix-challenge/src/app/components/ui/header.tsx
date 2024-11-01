@@ -14,7 +14,8 @@ const Header = () => {
                 </Link>
                 <Nav />
                 <div className="flex">
-                    <Link href="https://github.com/marcosguimaraest">
+                    <Link href="https://github.com/marcosguimaraest"
+                        target="_blank">
                         <Button>
                             GITHUB
                         </Button>
