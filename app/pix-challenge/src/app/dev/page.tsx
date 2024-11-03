@@ -1,4 +1,4 @@
-import Header from "@/app/components/ui/header";
+import Header from "@/components/ui/header";
 import { Button } from "@/components/ui/button";
 
 export default function Dev() {

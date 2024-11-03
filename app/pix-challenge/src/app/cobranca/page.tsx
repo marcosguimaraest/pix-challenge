@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import FormCobranca from "../components/ui/form";
+import FormCobranca from "../../components/ui/form";
 import Image from "next/image";
 
 export default function Cobranca() {
