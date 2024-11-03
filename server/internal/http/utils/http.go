@@ -26,6 +26,9 @@ func setDefaultHeaders(req *http.Request) {
 
 func GetDefaultRequest(method string, body []byte, endpoint string) (*http.Request, error) {
 	req, err := http.NewRequest(method, uriApi+endpoint, strings.NewReader(string(body)))
+	if err != nil {
+		return req, err
+	}
 	setDefaultHeaders(req)
 	return req, err
 }
