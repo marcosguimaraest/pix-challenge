@@ -1,17 +1,127 @@
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { UseFormReturn, useForm } from "react-hook-form"
+import { date, z } from "zod"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import FormCobranca from "../../components/ui/form";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from 'lucide-react';
+
+const formSchema = z.object({
+    customer: z.string().min(2).max(50),
+    billingType: z.string().length(3),
+    value: z.string().min(2).max(50),
+    dueDate: z.string().min(2).max(50)
+})
 
 export default function Cobranca() {
+    const {toast} = useToast()
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            customer: "",
+            billingType: "PIX",
+            value: "",
+            dueDate: ""
+        },
+    })
+
+    function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log(values.customer)
+        form.reset()
+        setDialogOpen(false)
+        toast({
+            variant: "default",
+            title: "Cobrança criada!",
+            description: "Esperando pagamento..."
+        })
+    }
+    const [isDialogOpen, setDialogOpen] = useState(false)
     return (
         <div className="container mx-auto xl:p-14">
-            <Image src={"data:image/pgn;base64, iVBORw0KGgoAAAANSUhEUgAAAcIAAAHCAQAAAABUY/ToAAADkElEQVR4Xu2VwW4bMRBDfdP//1E/a2/b8JHSOgGKFO2hU4CKvdJw+OiDxs7r/sP14/VV+d1V8rtV8rv1V+T1Yq2b07qWdlWLv2i32vHgLjmVtPzhicOmvILK60fcJeeSkgJx9OVfeLl2F3nFXXI4CSCYmu2keQQUUPJ/IW++yz7uswvmA23nlpxMct2wyCjUBCwRaUu3u+RYUjfO7f7WX9wlf/n3j8ln7btXDF2l4l6aA5SzSg4lZYo9wMXbN25EfR9l0qnkVNIdzYEI336KGJ8oGAn+ZpccSKoXCtNrJ8C7lXACw5ccSt6++3C2R5ItxkNxfOU/b8mRpE1nAuJ4M7pnIXLJuaQdl/oy7aC1U1zZxlhcX2ao5CgyopcD4JzimEflVXIsaezKAy8JdpxQeo+35GCStecBv+bg9emhTCGyrzMJJaeR0iWmsxnunsu3oCmQi+iLSSg5kbSdP7dObQu1RwXB6SWnkjjUt6IWk5CMPRX7ZE/JweS+ah3wPBF43dMHOBa55FxSfY+CPQ5Lyn1iIGwuOZhElwCobelNlGVwx0QrOZaM51y0qxhkz0l9F4oqOZbcC01t3pESJfaxrkzCW11yDKl7v8+dG+YlzRXD4ATrJWeT9uTsMg9d/E7g5A8qOZXct8tXVp18i/ckcAhjr7aSk0lRcgixIxI5Dt0Hn0sOJVViZn/O5jwCG3PJh5UcSj7ILUncLWvgZzY8Jmx3ybkkl2tdEfuM/QyCclI5uORQckNrX7M2tdmkkxgfVlUlh5LuLeqLScjRd58nA3FSrj1DJSeScgdfjIIrh2IQnzlQxnr7pS45kQTj1gWwFGcNQjUG+0sOJSXaZ9OHXV3cJ1MlbJSSo8nj+6D1dIySdHziDIOWHEpyMqDW6eEiM15/hq3+TSg5kNyYfGq4pwTZ1UhSIMSSc0k7/D3W42YGyHgSZfOHpCw5lEwbWZK7Jt6odL1f+aUuOZD0AFCm47NZvxwlSQ9tJYeSaoOs3RUS+w4iXQbn3CXnkjKHC/lSM8xOYR2t5GTSqrvB5XAK8I5C411yKClB2mV9OzlAEPZ20mwwCSVHkpLOEweFHodRvCnpJUeTmoF4ZNttD4gCPR9HQy45n4Slb0CMBEj53Se75HySHbcGIlduoxTH0Ps6CSUHkblxcXh1snxo2k/w+vQbX3IUSRdR/WXTLghiI8ddFSWHkn+4Sn63Sn63/gn5Ew4ojkpDXZX7AAAAAElFTkSuQmCC"
-            } width={500} height={500} alt="Rei">
-
-            </Image>
-            <FormCobranca>
-            </FormCobranca>
+            <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button
+                    className="flex gap-2"
+                    disabled={form.formState.isLoading}>
+                        {form.formState.isLoading && (<Loader2 className="mr-2 h-4 w-4 animate-spin"></Loader2>)}
+                        Gerar Cobrança
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="mb-10">Are you absolutely sure?</DialogTitle>
+                        <DialogDescription>
+                            
+                        </DialogDescription>
+                    </DialogHeader>
+                    <Form {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                                    <FormField
+                                        control={form.control}
+                                        name="customer"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Customer</FormLabel>
+                                                <FormControl>
+                                                    <Input type="name" placeholder="cus_000000" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="value"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Valor</FormLabel>
+                                                <FormControl>
+                                                    <Input type="number" placeholder="10.2" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="dueDate"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Valor</FormLabel>
+                                                <FormControl>
+                                                    <Input type="date" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button type="submit">Submit</Button>
+                                </form>
+                            </Form>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
