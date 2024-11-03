@@ -9,7 +9,9 @@ import (
 func SetRoutes(g *gin.Engine) {
 	//g.POST("/pix/qrcode/generate", actions.QrCodeAction)
 	g.POST("/payment/", actions.PaymentAction)
+	g.GET("/payment", actions.ListPaymentsAction)
+	g.POST("/customer/", actions.CustomerAction)
+	g.GET("/customer", actions.ListCustomerAction)
 	g.POST("/transfer/", actions.CashoutAction)
 	g.GET("/qrcode", actions.PaymentQrCodeAction)
-	g.GET("/payment", actions.ListPaymentsAction)
 }

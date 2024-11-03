@@ -1,6 +1,6 @@
 package objects
 
-type Custumer struct {
+type Customer struct {
 	Name    string `json:"name"`
 	CpfCnpj string `json:"cpfCnpj"`
 }
