@@ -61,7 +61,19 @@ func ResolveResponse(res *http.Response, c *gin.Context) ([]byte, error) {
 	}
 	return body, err
 }
-
+func ResolveGetRequest(c *gin.Context, endpoint string) *http.Response {
+	req, err := GetDefaultRequest("GET", []byte(""), endpoint)
+	if err != nil {
+		DefaultError(c, err)
+		return nil
+	}
+	res, err := DoDefaultRequest(req)
+	if err != nil {
+		DefaultError(c, err)
+		return nil
+	}
+	return (res)
+}
 func ResolveRequest(obj any, c *gin.Context, endpoint string) *http.Response {
 	qrCodeBytes, _ := json.Marshal(obj)
 	fmt.Println(string(qrCodeBytes))

@@ -19,7 +19,7 @@ func ByteToPaymentQrCodeResponse(b []byte) (PaymentQrCodeResponse, error) {
 	return paymentQrCodeResponse, err
 }
 
-func PaymentQRToH(pqr PaymentQrCodeResponse) gin.H {
+func PaymentQRCodeResponseToH(pqr PaymentQrCodeResponse) gin.H {
 	return gin.H{
 		"encodedImage":   pqr.EncodedImage,
 		"payload":        pqr.Payload,
