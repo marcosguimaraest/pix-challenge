@@ -14,4 +14,5 @@ func SetRoutes(g *gin.Engine) {
 	g.GET("/customer", actions.ListCustomerAction)
 	g.POST("/transfer/", actions.CashoutAction)
 	g.GET("/qrcode", actions.PaymentQrCodeAction)
+	g.GET("/testhundredcashin", actions.HundredReqs)
 }
