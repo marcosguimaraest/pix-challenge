@@ -24,12 +24,14 @@ import { Button } from "@/components/ui/button";
 import GetCustomers, { CustomerList } from "@/utils/actions/customers";
 import GetPayments, { Payment, PaymentsList } from "@/utils/actions/payments";
 import DialogCardCobranca from "@/components/ui/card_cobranca";
-import type {GetStaticProps } from 'next'
+import type { GetStaticProps } from 'next'
+import { Cobrancas } from "@/components/ui/cobranca_populate";
 
-var customersList = await GetCustomers()
-var paymentsList = await GetPayments()
+
 
 export default async function Home() {
+  var customersList = await GetCustomers()
+  var paymentsList = await GetPayments()
   return (
     <main>
       <div className="container mx-auto h-full">
@@ -47,7 +49,7 @@ export default async function Home() {
           </div>
         </div>
         <div className="grid grid-cols-4 gap-4 px-20 pb-16">
-          {paymentsList.payments.map((payment) => {
+          {paymentsList.payments != undefined ? paymentsList.payments.map((payment) => {
             let customerName: string = ""
             customersList.customers.forEach((customer) => {
               if (customer.id == payment.customer) {
@@ -59,7 +61,7 @@ export default async function Home() {
               customer: customerName
             }
             return <DialogCardCobranca key={payment.id} {...dialogProps} ></DialogCardCobranca>
-          })}
+          }) : <h1 className="text-2xl font-semibold p-10">Nenhuma cobrança encontrada<span className="text-4xl text-purple-500">...</span></h1>}
         </div>
       </div>
     </main>

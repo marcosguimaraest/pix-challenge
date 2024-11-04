@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const uriApi = "https://sandbox.asaas.com/api/v3/"
+const uriApi = "https://api.asaas.com/v3/"
 
 var apiKey string = os.Getenv("ASAASKEY")
 
