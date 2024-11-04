@@ -1,3 +1,4 @@
+"use server"
 import {
     Card,
     CardContent,
@@ -19,6 +20,8 @@ import { Circle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Payment } from "@/utils/actions/payments";
 import { Customer } from "@/utils/actions/customers";
+import GetQrCode from "@/utils/actions/qrcode";
+import Image from "next/image";
 
 function CircleColor({status}: {status: string})
 {
@@ -42,26 +45,26 @@ function CardCobranca({payment, customer}: { payment: Payment, customer: string}
             </CardTitle>
         </CardHeader>
         <CardContent>
-            <p className="text-l font-semibold">{"R$" + payment.value + ",00"}</p>
+            <p className="text-l font-semibold">{Intl.NumberFormat('pt-BR', {style: "currency", currency: "BSD"}).format(payment.value)}</p>
         </CardContent>
     </Card>)
 }
 
-export default function DialogCardCobranca({payment, customer}: { payment: Payment, customer: string}) {
+export default async function DialogCardCobranca({payment, customer}: { payment: Payment, customer: string}) {
+    var qrcode = await GetQrCode(payment.id)
+
     return (<Dialog>
         <DialogTrigger>
             <CardCobranca key={payment.id} payment={payment} customer={customer} ></CardCobranca>
         </DialogTrigger>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>{payment.customer}</DialogTitle>
+                <DialogTitle>{customer}</DialogTitle>
             </DialogHeader>
             <div>
-                <h1>{"R$" + payment.value + ",00"}</h1>
+                <h1>{Intl.NumberFormat('pt-BR', {style: "currency", currency: "BSD"}).format(payment.value)}</h1>
             </div>
-            <Button>
-                QRCode
-            </Button>
+            <Image className="self-center" src={`data:image/jpeg;base64, ${qrcode.encodedImage}`} alt="QRCODE" width={200} height={200}/>
         </DialogContent>
     </Dialog>)
 }

@@ -1,3 +1,5 @@
+"use server"
+
 import {
   Card,
   CardContent,
@@ -19,9 +21,10 @@ import { Circle } from 'lucide-react';
 import Cobranca from "@/components/ui/dialog_cobranca";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import GetCustomers from "@/utils/actions/customers";
-import GetPayments, { Payment } from "@/utils/actions/payments";
+import GetCustomers, { CustomerList } from "@/utils/actions/customers";
+import GetPayments, { Payment, PaymentsList } from "@/utils/actions/payments";
 import DialogCardCobranca from "@/components/ui/card_cobranca";
+import type {GetStaticProps } from 'next'
 
 var customersList = await GetCustomers()
 var paymentsList = await GetPayments()

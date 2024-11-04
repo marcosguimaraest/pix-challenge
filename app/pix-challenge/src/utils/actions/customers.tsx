@@ -1,3 +1,5 @@
+"use server"
+
 import { get } from "http"
 import { DefaultGetRequest, DefaultRequest, DefaultUrl, ResolveResponse } from "../http"
 

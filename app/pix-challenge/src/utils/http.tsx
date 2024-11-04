@@ -17,6 +17,9 @@ export async function DefaultGetRequest(method: string, url: string)
     const res = await fetch(
         url,
         {
+            next: {
+                revalidate: 10
+            },
             method: method,
             headers: DefaultHeaders()
         })

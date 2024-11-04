@@ -1,3 +1,5 @@
+"use server"
+
 import { get } from "http"
 import { DefaultGetRequest, DefaultRequest, DefaultUrl, ResolveResponse } from "../http"
 
@@ -14,6 +16,13 @@ export interface Payment {
   status: string
 }
 
+export interface PaymentRequest {
+  customer: string
+  billingType: string
+  value: number
+  dueDate: string
+}
+
   
 export default async function GetPayments()
 {
@@ -22,4 +31,12 @@ export default async function GetPayments()
     var body = await ResolveResponse(res)
     paymentsList = JSON.parse(body)
     return (paymentsList)
+}
+
+export async function PostPayment(payment: PaymentRequest)
+{
+  var stringfiedPayment = JSON.stringify(payment)
+  console.log(stringfiedPayment)
+  var res = await DefaultRequest("POST", DefaultUrl("payment"), stringfiedPayment)
+  var body = await ResolveResponse(res);
 }
