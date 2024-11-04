@@ -12,6 +12,17 @@ function DefaultHeaders()
     }
 }
 
+export async function DefaultGetRequest(method: string, url: string)
+{
+    const res = await fetch(
+        url,
+        {
+            method: method,
+            headers: DefaultHeaders()
+        })
+    return (res)
+}
+
 export async function DefaultRequest(method: string, url: string, body: string)
 {
     const res = await fetch(
@@ -26,9 +37,6 @@ export async function DefaultRequest(method: string, url: string, body: string)
 
 export async function ResolveResponse(res: Response)
 {
-    if (res.status == 200)
-    {
-        const body = await res.text()
-        const object = JSON.parse(body);
-    }
+    const body = await res.text()
+    return (body)
 }

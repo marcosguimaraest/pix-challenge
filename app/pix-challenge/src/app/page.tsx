@@ -19,42 +19,14 @@ import { Circle } from 'lucide-react';
 import Cobranca from "@/components/ui/dialog_cobranca";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import GetCustomers from "@/utils/actions/customers";
+import GetPayments, { Payment } from "@/utils/actions/payments";
+import DialogCardCobranca from "@/components/ui/card_cobranca";
 
-function CardCobranca() {
-  return (<Card className="relative hover:bg-gray-200 ">
-    <CardHeader >
-      <CardTitle>
-        <div className="flex flex-row flex-nowrap items-center justify-between">
-          <h1 className="text-2xl text-bold">pay_lyfihp3qruu851v7</h1>
-          <Circle className="absolute bottom-3 right-2 text-red-600"></Circle>
-        </div>
-      </CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-l font-semibold">R$1349,90</p>
-    </CardContent>
-  </Card>)
-}
+var customersList = await GetCustomers()
+var paymentsList = await GetPayments()
 
-function DialogCardCobranca() {
-  return (<Dialog>
-    <DialogTrigger>
-      <CardCobranca></CardCobranca>
-    </DialogTrigger>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>pay_lyfihp3qruu851v7</DialogTitle>
-      </DialogHeader>
-      <div>
-        <h1>R$1349,90</h1>
-      </div>
-      <Button>
-        QRCode
-      </Button>
-    </DialogContent>
-  </Dialog>)
-}
-export default function Home() {
+export default async function Home() {
   return (
     <main>
       <div className="container mx-auto h-full">
@@ -66,13 +38,25 @@ export default function Home() {
               </h1>
             </div>
             <div className="flex flex-row flex-wrap xl:flex-row items-center justify-center">
-              <Cobranca>
+              <Cobranca customersList={customersList}>
               </Cobranca>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-4 gap-4">
-          <DialogCardCobranca />
+        <div className="grid grid-cols-4 gap-4 px-20 pb-16">
+          {paymentsList.payments.map((payment) => {
+            let customerName: string = ""
+            customersList.customers.forEach((customer) => {
+              if (customer.id == payment.customer) {
+                customerName = customer.name
+              }
+            })
+            const dialogProps = {
+              payment: payment,
+              customer: customerName
+            }
+            return <DialogCardCobranca key={payment.id} {...dialogProps} ></DialogCardCobranca>
+          })}
         </div>
       </div>
     </main>
